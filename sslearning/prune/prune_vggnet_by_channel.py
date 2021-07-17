@@ -4,13 +4,12 @@
 @date: 2021/7/6 下午9:48
 @file: prune_vggnet_by_channel.py
 @author: zj
-@description: 对卷积层通道维度进行剪枝
-1. 不对第一个Conv2d进行剪枝，其输入为固定通道数；
-2. 通道剪枝影响的是上游的滤波器维度，所以需要倒序剪枝
+@description: Pruning the channel dimension of convolution layer
+1. The first Conv2d is not pruned, and its input is a fixed number of channels;
+2. Channel pruning affects the upstream filter dimension, so it needs pruning in reverse order
 """
 
 import numpy as np
-import torch
 import torch.nn as nn
 
 from sslearning.config.key_word import KEY_CHANNEL
@@ -25,17 +24,17 @@ def prune_conv_bn_relu(old_conv2d, old_batchnorm2d, old_relu, conv_threshold, pr
     assert isinstance(old_relu, nn.ReLU)
 
     weight_copy = computer_weight(old_conv2d.weight, prune_way, (0, 2, 3))
-    # 如果Conv的通道数小于等于最小通道数，则不进行剪枝操作
+    # If the number of channels of Conv is less than or equal to the minimum number of channels, pruning is not performed
     if len(weight_copy) <= minimum_channels:
         in_idx = np.arange(minimum_channels)
     else:
         mask = weight_copy.gt(conv_threshold).float()
-        # 输入通道剪枝掩码
+        # the channel pruning mask
         in_idx = np.squeeze(np.argwhere(np.asarray(mask.cpu().numpy())))
         if in_idx.size == 1:
             in_idx = np.resize(in_idx, (1,))
 
-        # 如果剪枝后特征长度小于8或者不是8的倍数，那么向上取整到8的倍数
+        # If the feature length after pruning is less than minimum_channels or not a multiple of divisor, it will be rounded up to a multiple of divisor
         old_prune_len = len(in_idx)
         new_prune_len = round_to_multiple_of(old_prune_len, divisor)
         if new_prune_len > old_prune_len:
@@ -47,10 +46,10 @@ def prune_conv_bn_relu(old_conv2d, old_batchnorm2d, old_relu, conv_threshold, pr
 
             in_idx = np.array(sorted(np.concatenate((in_idx, res_idx))))
 
-    # 输入通道数
+    # the number of channels
     in_channels = len(in_idx)
 
-    # 新建Conv2d/BatchNorm2d/ReLU
+    # New Conv2d/BatchNorm2d/ReLU
     new_conv2d = create_conv2d(old_conv2d, in_channels, out_filters)
     new_batchnorm2d = create_batchnorm2d(old_batchnorm2d, out_filters)
     new_relu = nn.ReLU(inplace=True)
@@ -70,14 +69,14 @@ def prune_conv_bn_relu(old_conv2d, old_batchnorm2d, old_relu, conv_threshold, pr
 
 def prune_features(module_list, conv_threshold, prune_way, minimum_channels=8, divisor=8):
     """
-    已知features的模块构成了，逐个采集Conv层计算通道剪枝个数，重新构建
+    Given the module composition of features, collect Conv layers one by one, calculate the number of pruning channels, and reconstruct them
     """
     new_module_list = list()
 
     out_filters = 512
     out_idx = None
     idx = len(module_list) - 1
-    # 不对最开始的Conv层进行通道剪枝
+    # Channel pruning is not performed on the initial Conv layer
     while idx > 3:
         if isinstance(module_list[idx], nn.ReLU):
             conv2d, batchnorm2d, relu, out_filters, out_idx = prune_conv_bn_relu(module_list[idx - 2],
@@ -99,7 +98,7 @@ def prune_features(module_list, conv_threshold, prune_way, minimum_channels=8, d
 
     old_conv2d = module_list[idx - 2]
     old_batchnorm2d = module_list[idx - 1]
-    # 新建Conv2d/BatchNorm2d/ReLU
+    # New Conv2d/BatchNorm2d/ReLU
     new_conv2d = create_conv2d(old_conv2d, 3, out_filters)
     new_batchnorm2d = create_batchnorm2d(old_batchnorm2d, out_filters)
     new_relu = nn.ReLU(inplace=True)

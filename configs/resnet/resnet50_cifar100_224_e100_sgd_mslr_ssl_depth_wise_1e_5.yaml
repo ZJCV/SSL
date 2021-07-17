@@ -6,7 +6,7 @@ RNG_SEED: 1
 OUTPUT_DIR: 'outputs/resnet/resnet50_cifar100_224_e100_sgd_mslr_ssl_depth_wise_1e_5'
 SSL:
   SPARSITY_REGULARIZATION: True
-  TYPE: 'filter_wise'
+  TYPE: 'depth_wise'
   # depth_wise
   LAMBDA_D: 1e-5
 TRAIN:

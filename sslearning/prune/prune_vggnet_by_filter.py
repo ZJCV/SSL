@@ -23,17 +23,17 @@ def prune_conv_bn_relu(old_conv2d, old_batchnorm2d, old_relu, conv_threshold, pr
     assert isinstance(old_relu, nn.ReLU)
 
     weight_copy = computer_weight(old_conv2d.weight, prune_way, (1, 2, 3))
-    # 如果BN的通道数小于等于8，则不进行剪枝操作
+    # If the number of channels of BN is less than or equal to minimum_channels, pruning is not performed
     if len(weight_copy) <= minimum_channels:
         out_idx = np.arange(minimum_channels)
     else:
         mask = weight_copy.gt(conv_threshold).float()
-        # 输出剪枝掩码
+        # Output pruning mask
         out_idx = np.squeeze(np.argwhere(np.asarray(mask.cpu().numpy())))
         if out_idx.size == 1:
             out_idx = np.resize(out_idx, (1,))
 
-        # 如果剪枝后特征长度小于8或者不是8的倍数，那么向上取整到8的倍数
+        # If the feature length after pruning is less than minimum_channels or not a multiple of divisor, it will be rounded up to a multiple of divisor
         old_prune_len = len(out_idx)
         new_prune_len = round_to_multiple_of(old_prune_len, divisor)
         if new_prune_len > old_prune_len:
@@ -45,10 +45,10 @@ def prune_conv_bn_relu(old_conv2d, old_batchnorm2d, old_relu, conv_threshold, pr
 
             out_idx = np.array(sorted(np.concatenate((out_idx, res_idx))))
 
-    # 输出通道数
+    # Number of output channels
     out_filters = len(out_idx)
 
-    # 新建Conv2d/BatchNorm2d/ReLU
+    # New Conv2d/BatchNorm2d/ReLU
     new_conv2d = create_conv2d(old_conv2d, in_channels, out_filters)
     new_batchnorm2d = create_batchnorm2d(old_batchnorm2d, out_filters)
     new_relu = nn.ReLU(inplace=True)
@@ -68,7 +68,7 @@ def prune_conv_bn_relu(old_conv2d, old_batchnorm2d, old_relu, conv_threshold, pr
 
 def prune_features(module_list, conv_threshold, prune_way, minimum_channels=8, divisor=8):
     """
-    已知features的模块构成了，逐个采集Conv层计算滤波器剪枝个数，重新构建
+    Given the module composition of features, collect Conv layers one by one, calculate the number of pruning filters, and reconstruct them
     """
     new_module_list = list()
     idx = 0
@@ -98,7 +98,7 @@ def prune_features(module_list, conv_threshold, prune_way, minimum_channels=8, d
 
 def prune_classifier(module_list, in_channels, in_idx):
     """
-    对于VGGNet而言，分类器并不包含BN层，所以仅需对输入通道进行调整即可
+    For VGGNet, the classifier does not contain BN layer, so it only needs to adjust the input channel
     :param module_list:
     :param in_channels:
     :return:

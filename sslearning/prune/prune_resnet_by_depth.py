@@ -4,7 +4,9 @@
 @date: 2021/7/6 下午9:48
 @file: prune_vggnet_by_channel.py
 @author: zj
-@description: 层剪枝，每次仅执行一层剪枝操作
+@description: Depth Pruning, only one layer pruning operation is performed at a time
+Firstly, the weight of each Bottleneck is calculated;
+then the Bottleneck with the smallest value is selected for pruning
 """
 
 import numpy as np
@@ -43,13 +45,13 @@ def prune_bottleneck(module_list, prune_way):
     """
     weight_list = list()
 
-    # 计算每个Bottleneck对应的权重
+    # Calculate the weight corresponding to each Bottleneck
     for module in module_list:
         assert isinstance(module, Bottleneck)
 
         weight_list.append(computer_bottleneck_weight(module, prune_way).cpu().numpy())
 
-    # 计算权重值最小的位置
+    # Calculate the position with the smallest weight value
     idx = np.argmin(weight_list)
 
     new_module_list = list()
@@ -66,18 +68,15 @@ def prune(model, prune_way):
     model = list(model.children())[0]
     # print(model)
 
-    # 首先计算每个Bottleneck对应的权重大小，然后从中选出值最小的Bottleneck进行剪枝
-
-    # 第一步，统计所有Bottleneck
-
+    # The first step is to count all Bottleneck
     bottleneck_name_list = list()
     bottleneck_module_list = list()
-    # 逐个处理layer
+    # Process layer one by one
     for layer_name, layer in list(model.named_children())[4:8]:
         assert isinstance(layer, nn.Sequential)
-        # 遍历每个bottleneck
+        # Traverse each bottleneck
         for submodule_name, submodule in layer.named_children():
-            # 统计每个bottleneck的层，进行剪枝操作
+            # Counting the layers of each bottleneck and pruning
             assert isinstance(submodule, Bottleneck)
             bottleneck_name_list.append(f'{layer_name}.{submodule_name}')
             bottleneck_module_list.append(submodule)

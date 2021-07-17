@@ -9,7 +9,6 @@
 
 import torch
 import torch.nn as nn
-from torchvision.models.resnet import Bottleneck
 
 from sslearning.config.key_word import KEY_FILTER, KEY_CHANNEL, KEY_FILTER_AND_CHANNEL
 
@@ -18,7 +17,7 @@ def computer_total(model, dim):
     assert isinstance(model, nn.Module)
     total = 0
 
-    # 统计所有Conv的指定维度长度
+    # Count the specified dimension lengths of all Conv
     for m in model.modules():
         if isinstance(m, nn.Conv2d):
             total += m.weight.data.shape[dim]
@@ -51,7 +50,7 @@ def computer_conv(model, conv, index, dim, dimension, prune_way):
 
 def computer_conv_threshold(model, percent, prune_type=KEY_FILTER, prune_way='mean_abs'):
     """
-    计算Conv层剪枝阈值
+    Calculate pruning threshold of Conv layer
     """
     total = 0
 
@@ -86,8 +85,7 @@ def computer_conv_threshold(model, percent, prune_type=KEY_FILTER, prune_way='me
     return total, thre
 
 
-
-# 核心函数，参考了torch.quantization.fuse_modules()的实现
+# The core function refers to the implementation of torch.quantification.fuse_modules()
 def _set_module(model, submodule_key, module):
     tokens = submodule_key.split('.')
     sub_tokens = tokens[:-1]

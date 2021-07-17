@@ -4,9 +4,11 @@
 @date: 2021/7/6 下午9:48
 @file: prune_vggnet_by_channel.py
 @author: zj
-@description: 对卷积层滤波器维度和通道维度进行剪枝
-1. 对当前层的滤波器维度进行剪枝掩码计算时，已经把下一层的通道维度的剪枝掩码计算好了；到了下一层的通道维度，直接使用上一层得到的滤波器剪枝掩码，再进行通道维度剪枝即可。
-2. 不对第一个Conv2d进行通道剪枝，其输入为固定通道数；
+@description: Pruning filter dimension and channel dimension of convolution layer
+1. When calculating the pruning mask of the filter dimension of the current layer,
+    the pruning mask of the channel dimension of the next layer has been calculated;
+2. When the channel dimension of the next layer is reached, directly use the filter pruning mask obtained from the previous layer, and then prune the channel dimension.
+3. Channel pruning is not performed on the first Conv2d, and its input is a fixed channel number;
 """
 
 import numpy as np
@@ -21,7 +23,7 @@ from .layers import create_linear, create_conv2d, create_dropout, create_batchno
 def compute_mask(weight, conv_threshold, prune_way,
                  dim=(1, 2, 3), minimum_channels=8):
     weight_copy = computer_weight(weight, prune_way, dim)
-    # minimum_channels，则不进行剪枝操作
+    # Minimum_channels, pruning is not performed
     if len(weight_copy) <= minimum_channels:
         mask = torch.ones(weight_copy.shape).gt(0)
     else:
@@ -31,14 +33,13 @@ def compute_mask(weight, conv_threshold, prune_way,
 
 
 def computer_out_idx(mask, weight,
-                     conv_threshold, prune_way, dim=(1, 2, 3),
-                     minimum_channels=8, divisor=8):
-    # 输出剪枝掩码
+                     conv_threshold, prune_way, dim=(1, 2, 3), divisor=8):
+    # Output pruning mask
     out_idx = np.squeeze(np.argwhere(np.asarray(mask.cpu().numpy())))
     if out_idx.size == 1:
         out_idx = np.resize(out_idx, (1,))
 
-    # 如果剪枝后特征长度小于8或者不是8的倍数，那么向上取整到8的倍数
+    # If the feature length after pruning is not a multiple of divisor, it will be rounded up to a multiple of divisor
     old_prune_len = len(out_idx)
     new_prune_len = round_to_multiple_of(old_prune_len, divisor)
     if new_prune_len > old_prune_len:
@@ -63,14 +64,14 @@ def prune_conv_bn_relu(old_conv2d_1, old_batchnorm2d, old_relu, old_conv2d_2,
     if isinstance(old_conv2d_2, nn.MaxPool2d):
         old_conv2d_2 = None
 
-    # 对当前卷积层执行滤波器剪枝
+    # Perform filter pruning on the current convolution layer
     out_mask_1 = compute_mask(old_conv2d_1.weight,
                               conv_threshold,
                               prune_way,
                               dim=(1, 2, 3),
                               minimum_channels=minimum_channels)
 
-    # 对下一个卷积层执行通道剪枝
+    # Perform channel pruning on the next convolution layer
     out_mask_2 = torch.ones(out_mask_1.shape).gt(0) if old_conv2d_2 is None else compute_mask(old_conv2d_2.weight,
                                                                                               conv_threshold,
                                                                                               prune_way,
@@ -78,12 +79,11 @@ def prune_conv_bn_relu(old_conv2d_1, old_batchnorm2d, old_relu, old_conv2d_2,
                                                                                               minimum_channels=minimum_channels)
     out_mask = out_mask_1 | out_mask_2
     out_idx = computer_out_idx(out_mask, old_conv2d_1.weight,
-                               conv_threshold, prune_way, dim=(1, 2, 3),
-                               minimum_channels=minimum_channels, divisor=divisor)
-    # 输出通道数
+                               conv_threshold, prune_way, dim=(1, 2, 3), divisor=divisor)
+    # Number of output channels
     out_filters = len(out_idx)
 
-    # 新建Conv2d/BatchNorm2d/ReLU
+    # New Conv2d/BatchNorm2d/ReLU
     new_conv2d = create_conv2d(old_conv2d_1, in_channels, out_filters)
     new_batchnorm2d = create_batchnorm2d(old_batchnorm2d, out_filters)
     new_relu = nn.ReLU(inplace=True)
@@ -103,7 +103,7 @@ def prune_conv_bn_relu(old_conv2d_1, old_batchnorm2d, old_relu, old_conv2d_2,
 
 def prune_features(module_list, conv_threshold, prune_way, minimum_channels=8, divisor=8):
     """
-    已知features的模块构成了，逐个采集Conv层计算滤波器剪枝个数，重新构建
+    Given the module composition of features, collect Conv layers one by one, calculate the number of filter pruning and channels, and reconstruct them
     """
     new_module_list = list()
     idx = 0
@@ -135,7 +135,7 @@ def prune_features(module_list, conv_threshold, prune_way, minimum_channels=8, d
 
 def prune_classifier(module_list, in_channels, in_idx):
     """
-    对于VGGNet而言，分类器并不包含BN层，所以仅需对输入通道进行调整即可
+    For VGGNet, the classifier does not contain BN layer, so it only needs to adjust the input channel
     :param module_list:
     :param in_channels:
     :return:
