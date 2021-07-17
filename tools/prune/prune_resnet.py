@@ -12,14 +12,14 @@ import warnings
 
 warnings.filterwarnings("ignore")
 
-from sslearning.config.key_word import KEY_LAYER
+from sslearning.config.key_word import KEY_DEPTH
 from operation import load_model, prune_model, save_model
 
 
 def prune_depth(cfg_file, prune_way='mean_abs'):
     model, arch_name = load_model(cfg_file, data_shape=(1, 3, 224, 224), device=torch.device('cpu'))
 
-    pruned_type = KEY_LAYER
+    pruned_type = KEY_DEPTH
     pruned_model, true_pruned_ratio, threshold = prune_model(pruned_type,
                                                              prune_way,
                                                              arch_name,

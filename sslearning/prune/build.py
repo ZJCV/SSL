@@ -7,7 +7,7 @@
 @description: 
 """
 
-from ..config.key_word import KEY_CHANNEL, KEY_FILTER_AND_CHANNEL, KEY_FILTER, KEY_LAYER
+from ..config.key_word import KEY_CHANNEL, KEY_FILTER_AND_CHANNEL, KEY_FILTER
 
 from . import prune_vggnet_by_channel
 from . import prune_vggnet_by_filter

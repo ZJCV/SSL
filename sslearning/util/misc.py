@@ -11,7 +11,7 @@ import torch
 
 from torchvision.models.resnet import Bottleneck
 
-from sslearning.config.key_word import KEY_CHANNEL, KEY_FILTER, KEY_FILTER_AND_CHANNEL, KEY_LAYER, KEY_FILTER_SHAPE
+from sslearning.config.key_word import KEY_CHANNEL, KEY_FILTER, KEY_FILTER_AND_CHANNEL, KEY_DEPTH, KEY_FILTER_SHAPE
 
 
 def group_lasso(param_group):
@@ -59,7 +59,7 @@ def ssl_loss(model, model_type='resnet', loss_type=KEY_FILTER,
                             ssl_loss += lambda_s * group_lasso(param[:, channel_idx, height_idx, width_idx])
             else:
                 raise ValueError(f"{type} doesn't supports")
-    elif loss_type == KEY_LAYER:
+    elif loss_type == KEY_DEPTH:
         if model_type == 'resnet':
             for name, module in model.named_modules():
                 if isinstance(module, Bottleneck):
