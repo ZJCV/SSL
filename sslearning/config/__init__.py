@@ -15,7 +15,6 @@ def add_custom_config(_C):
     # Add your own customized configs.
     _C.SSL = CN()
     _C.SSL.SPARSITY_REGULARIZATION = False
-    # layer_wise
     _C.SSL.TYPE = "filter_and_channel_wise"
     # filter_wise
     _C.SSL.LAMBDA_N = 1e-5
