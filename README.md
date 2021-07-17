@@ -28,15 +28,21 @@
 
 ## Background
 
-Based on Group Lasso, SSL can achieve Filter/Channel/Filter Shape/Layer pruning.
+Based on Group Lasso, SSL can achieve Filter/Channel/Filter Shape/Depth pruning.
 
 ## Installation
 
-...
+```
+$ pip install -r requirements.txt
+```
 
 ## Usage
 
-...
+* For train
+
+```
+$ python tools/train.py -cfg=<CFG_FILE>
+```
 
 ## Maintainers
 

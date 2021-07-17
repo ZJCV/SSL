@@ -28,15 +28,21 @@
 
 ## 背景
 
-基于Group Lasso，SSL实现了滤波器/通道/滤波器形状/层剪枝功能。
+基于`Group Lasso`，`SSL`实现了滤波器/通道/滤波器形状/层剪枝功能。
 
 ## 安装
 
-。。。
+```
+$ pip install -r requirements.txt
+```
 
 ## 用法
 
-。。。
+* 训练
+
+```
+$ python tools/train.py -cfg=<CFG_FILE>
+```
 
 ## 主要维护人员
 

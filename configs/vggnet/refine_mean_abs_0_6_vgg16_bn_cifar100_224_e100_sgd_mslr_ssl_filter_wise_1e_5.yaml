@@ -1,0 +1,68 @@
+NUM_GPUS: 1
+NUM_NODES: 1
+RANK_ID: 0
+DIST_BACKEND: "nccl"
+RNG_SEED: 1
+OUTPUT_DIR: 'outputs/vggnet_pruned_filter/refine_mean_abs_0_6_vgg16_bn_cifar100_224_e100_sgd_mslr_ssl_filter_wise_1e_5'
+SSL:
+  SPARSITY_REGULARIZATION: True
+  TYPE: 'filter_wise'
+  # filter_wise
+  LAMBDA_N: 1e-5
+TRAIN:
+  LOG_STEP: 10
+  GRADIENT_ACCUMULATE_STEP: 1
+  MAX_EPOCH: 100
+  SAVE_EPOCH: 1
+  EVAL_EPOCH: 1
+  RESUME: False
+  USE_TENSORBOARD: True
+DATASET:
+  NAME: 'CIFAR100'
+  TRAIN_ROOT: './data/cifar'
+  TEST_ROOT: './data/cifar'
+  TOP_K: (1, 5)
+TRANSFORM:
+  TRAIN_METHODS: ('Resize', 'RandomCrop', 'RandomHorizontalFlip', 'ColorJitter', 'AUTO_AUGMENT', 'ToTensor', 'Normalize')
+  TEST_METHODS: ('Resize', 'CenterCrop', 'ToTensor', 'Normalize')
+  TRAIN_RESIZE: (256, )
+  TEST_RESIZE: (224, )
+  TRAIN_CROP: (224, 224)
+  TEST_CROP: (224, 224)
+  ColorJitter: (0.1, 0.1, 0.1, 0.1)
+  AUGMENT_POLICY: "cifar10"
+  MEAN: (0.45, 0.45, 0.45)
+  STD: (0.225, 0.225, 0.225)
+DATALOADER:
+  TRAIN_BATCH_SIZE: 128
+  TEST_BATCH_SIZE: 128
+  NUM_WORKERS: 4
+  RANDOM_SAMPLE: True
+  PREFETCHER: True
+MODEL:
+  HEAD:
+    NUM_CLASSES: 100
+  RECOGNIZER:
+    NAME: 'vgg16_bn_pruned'
+    PRELOADED: 'outputs/vggnet_pruned_filter/vgg16_bn_pruned_filter_wise_mean_abs_0.6.pkl'
+  CRITERION:
+    NAME: 'LabelSmoothingLoss'
+    SMOOTHING: 0.1
+    REDUCTION: 'mean'
+OPTIMIZER:
+  NAME: 'SGD'
+  LR: 0.05
+  MOMENTUM: 0.9
+  WEIGHT_DECAY:
+    DECAY: 1e-4
+    NO_BIAS: True
+    NO_NORM: True
+LR_SCHEDULER:
+  NAME: 'MultiStepLR'
+  IS_WARMUP: True
+  GAMMA: 0.1
+  MULTISTEP_LR:
+    MILESTONES: [ 40, 60, 80 ]
+  WARMUP:
+    ITERATION: 5
+    MULTIPLIER: 1.0
