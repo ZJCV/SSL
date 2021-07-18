@@ -17,6 +17,7 @@ TRAIN:
   EVAL_EPOCH: 1
   RESUME: False
   USE_TENSORBOARD: True
+  HYBRID_PRECISION: True
 DATASET:
   NAME: 'CIFAR100'
   TRAIN_ROOT: './data/cifar'
@@ -44,7 +45,7 @@ MODEL:
     NUM_CLASSES: 100
   RECOGNIZER:
     NAME: 'resnet50'
-    PRELOADED: ''
+    PRELOADED: 'outputs/resnet/resnet50_cifar100_224_e100_sgd_mslr_ssl_depth_wise_1e_5/model_0084.pth'
   CRITERION:
     NAME: 'LabelSmoothingLoss'
     SMOOTHING: 0.1

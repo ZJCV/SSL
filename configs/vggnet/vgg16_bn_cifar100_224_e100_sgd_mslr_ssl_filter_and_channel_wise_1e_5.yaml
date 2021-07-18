@@ -44,6 +44,7 @@ MODEL:
     NUM_CLASSES: 100
   RECOGNIZER:
     NAME: 'vgg16_bn'
+    PRELOADED: 'outputs/vggnet/vgg16_bn_cifar100_224_e100_sgd_mslr_ssl_filter_and_channel_wise_1e_5/model_0094.pth'
   CRITERION:
     NAME: 'LabelSmoothingLoss'
     SMOOTHING: 0.1

@@ -3,9 +3,12 @@ NUM_NODES: 1
 RANK_ID: 0
 DIST_BACKEND: "nccl"
 RNG_SEED: 1
-OUTPUT_DIR: 'outputs/resnet/resnet50_cifar100_224_e100_sgd_mslr'
+OUTPUT_DIR: 'outputs/vggnet_pruned_channel/refine_mean_abs_0_4_vgg16_bn_cifar100_224_e100_sgd_mslr_ssl_channel_wise_1e_5'
 SSL:
-  SPARSITY_REGULARIZATION: False
+  SPARSITY_REGULARIZATION: True
+  TYPE: 'channel_wise'
+  # channel_wise
+  LAMBDA_C: 1e-5
 TRAIN:
   LOG_STEP: 10
   GRADIENT_ACCUMULATE_STEP: 1
@@ -14,7 +17,6 @@ TRAIN:
   EVAL_EPOCH: 1
   RESUME: False
   USE_TENSORBOARD: True
-  HYBRID_PRECISION: True
 DATASET:
   NAME: 'CIFAR100'
   TRAIN_ROOT: './data/cifar'
@@ -41,8 +43,8 @@ MODEL:
   HEAD:
     NUM_CLASSES: 100
   RECOGNIZER:
-    NAME: 'resnet50'
-    PRELOADED: ''
+    NAME: 'vgg16_bn_pruned'
+    PRELOADED: 'outputs/vggnet_pruned_channel/vgg16_bn_pruned_channel_wise_mean_abs_0.4.pkl'
   CRITERION:
     NAME: 'LabelSmoothingLoss'
     SMOOTHING: 0.1

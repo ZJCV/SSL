@@ -3,9 +3,12 @@ NUM_NODES: 1
 RANK_ID: 0
 DIST_BACKEND: "nccl"
 RNG_SEED: 1
-OUTPUT_DIR: 'outputs/resnet/resnet50_cifar100_224_e100_sgd_mslr'
+OUTPUT_DIR: 'outputs/resnet_pruned_depth/refine_mean_abs_N_2_resnet50_cifar100_224_e100_sgd_mslr_ssl_depth_wise_1e_5'
 SSL:
-  SPARSITY_REGULARIZATION: False
+  SPARSITY_REGULARIZATION: True
+  TYPE: 'depth_wise'
+  # depth_wise
+  LAMBDA_D: 1e-5
 TRAIN:
   LOG_STEP: 10
   GRADIENT_ACCUMULATE_STEP: 1
@@ -41,8 +44,8 @@ MODEL:
   HEAD:
     NUM_CLASSES: 100
   RECOGNIZER:
-    NAME: 'resnet50'
-    PRELOADED: ''
+    NAME: 'resnet50_pruned'
+    PRELOADED: 'outputs/resnet_pruned_depth/resnet50_pruned_depth_wise_mean_abs_N_2.pkl'
   CRITERION:
     NAME: 'LabelSmoothingLoss'
     SMOOTHING: 0.1
