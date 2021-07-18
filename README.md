@@ -38,10 +38,37 @@ $ pip install -r requirements.txt
 
 ## Usage
 
+First, you need set env for PYTHONPATH and CUDA_VISIBLE_DEVICES
+
+```angular2html
+$ export PYTHONPATH=<project root path>
+$ export CUDA_VISIBLE_DEVICES=0
+```
+
+Then, begin `train-prune-finetuning`
+
 * For train
 
 ```
-$ python tools/train.py -cfg=<CFG_FILE>
+$ python tools/train.py -cfg=configs/vggnet/vgg16_bn_cifar100_224_e100_sgd_mslr_ssl_filter_wise_1e_5.yaml
+```
+
+* For prune
+
+```angular2html
+$ python tools/prune/prune_vggnet.py
+```
+
+* For fine-tuning
+
+```angular2html
+$ python tools/train.py -cfg=configs/vggnet/refine_mean_abs_0_2_vgg16_bn_cifar100_224_e100_sgd_mslr_ssl_filter_wise_1e_5.yaml
+```
+
+Finally, set the fine-tuning model path in the PRELOADED option of the configuration file
+
+```angular2html
+$ python tools/test.py -cfg=configs/vggnet/refine_mean_abs_0_2_vgg16_bn_cifar100_224_e100_sgd_mslr_ssl_filter_wise_1e_5.yaml
 ```
 
 ## Maintainers

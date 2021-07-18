@@ -38,10 +38,37 @@ $ pip install -r requirements.txt
 
 ## 用法
 
+首先，设置环境变量
+
+```angular2html
+$ export PYTHONPATH=<project root path>
+$ export CUDA_VISIBLE_DEVICES=0
+```
+
+然后进行`训练-剪枝-微调`
+
 * 训练
 
 ```
-$ python tools/train.py -cfg=<CFG_FILE>
+$ python tools/train.py -cfg=configs/vggnet/vgg16_bn_cifar100_224_e100_sgd_mslr_ssl_filter_wise_1e_5.yaml
+```
+
+* 剪枝
+
+```angular2html
+$ python tools/prune/prune_vggnet.py
+```
+
+* 微调
+
+```angular2html
+$ python tools/train.py -cfg=configs/vggnet/refine_mean_abs_0_2_vgg16_bn_cifar100_224_e100_sgd_mslr_ssl_filter_wise_1e_5.yaml
+```
+
+最后，在配置文件的PRELOADED选项中设置微调后的模型路径
+
+```angular2html
+$ python tools/test.py -cfg=configs/vggnet/refine_mean_abs_0_2_vgg16_bn_cifar100_224_e100_sgd_mslr_ssl_filter_wise_1e_5.yaml
 ```
 
 ## 主要维护人员
