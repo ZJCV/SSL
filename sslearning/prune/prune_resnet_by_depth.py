@@ -40,7 +40,7 @@ def computer_bottleneck_weight(m, prune_way):
         raise ValueError(f'{prune_way} does not supports')
 
 
-def prune_bottleneck(module_list, prune_way):
+def prune_bottleneck(module_list, prune_way, N=1):
     """
     """
     weight_list = list()
@@ -52,11 +52,11 @@ def prune_bottleneck(module_list, prune_way):
         weight_list.append(computer_bottleneck_weight(module, prune_way).cpu().numpy())
 
     # Calculate the position with the smallest weight value
-    idx = np.argmin(weight_list)
+    idx_list = np.argsort(weight_list)[:N]
 
     new_module_list = list()
     for i, module in enumerate(module_list):
-        if i == idx:
+        if i in idx_list:
             new_module_list.append(PrunedBottleneck(module))
         else:
             new_module_list.append(module)
@@ -64,7 +64,7 @@ def prune_bottleneck(module_list, prune_way):
     return new_module_list
 
 
-def prune(model, prune_way):
+def prune(model, prune_way, N=1):
     model = list(model.children())[0]
     # print(model)
 
@@ -81,7 +81,7 @@ def prune(model, prune_way):
             bottleneck_name_list.append(f'{layer_name}.{submodule_name}')
             bottleneck_module_list.append(submodule)
 
-    new_module_list = prune_bottleneck(bottleneck_module_list, prune_way)
+    new_module_list = prune_bottleneck(bottleneck_module_list, prune_way, N=N)
     assert len(new_module_list) == len(bottleneck_module_list) == len(bottleneck_name_list)
     set_module_list(model, bottleneck_name_list, bottleneck_module_list, new_module_list)
 

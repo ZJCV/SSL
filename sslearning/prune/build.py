@@ -17,7 +17,9 @@ from . import prune_resnet_by_depth
 
 def build_prune(model, model_name='vgg',
                 ratio=0.2, prune_type=KEY_CHANNEL, prune_way='mean_abs',
-                minimum_channels=8, divisor=8):
+                minimum_channels=8, divisor=8,
+                N=1
+                ):
     if 'vgg' in model_name:
         if prune_type == KEY_CHANNEL:
             return prune_vggnet_by_channel.prune(model, ratio, prune_way=prune_way,
@@ -31,6 +33,6 @@ def build_prune(model, model_name='vgg',
         else:
             raise ValueError(f'{model_name} does not supports')
     elif 'resnet' in model_name:
-        return prune_resnet_by_depth.prune(model, prune_way)
+        return prune_resnet_by_depth.prune(model, prune_way, N=N)
     else:
         raise ValueError(f'{model_name} does not supports')

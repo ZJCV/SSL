@@ -77,18 +77,18 @@ def prune_filter_and_channel(cfg_file, prune_way='mean_abs', pruned_rate=0.2, mi
 
 
 if __name__ == '__main__':
-    # cfg_file = 'configs/vggnet/vgg16_bn_cifar100_224_e100_sgd_mslr_ssl_filter_wise_1e_5.yaml'
-    #
-    # prune_filter(cfg_file, prune_way='mean_abs', pruned_rate=0.2, minimum_channels=8, divisor=8)
+    cfg_file = 'configs/vggnet/vgg16_bn_cifar100_224_e100_sgd_mslr_ssl_filter_wise_1e_5.yaml'
+
+    prune_filter(cfg_file, prune_way='mean_abs', pruned_rate=0.2, minimum_channels=8, divisor=8)
     # prune_filter(cfg_file, prune_way='mean', pruned_rate=0.2, minimum_channels=8, divisor=8)
     # prune_filter(cfg_file, prune_way='sum_abs', pruned_rate=0.2, minimum_channels=8, divisor=8)
     # prune_filter(cfg_file, prune_way='sum', pruned_rate=0.2, minimum_channels=8, divisor=8)
     # prune_filter(cfg_file, prune_way='mean_abs', pruned_rate=0.4, minimum_channels=8, divisor=8)
     # prune_filter(cfg_file, prune_way='mean_abs', pruned_rate=0.6, minimum_channels=8, divisor=8)
 
-    cfg_file = 'configs/vggnet/vgg16_bn_cifar100_224_e100_sgd_mslr_ssl_channel_wise_1e_5.yaml'
+    # cfg_file = 'configs/vggnet/vgg16_bn_cifar100_224_e100_sgd_mslr_ssl_channel_wise_1e_5.yaml'
     # prune_channel(cfg_file, prune_way='mean_abs', pruned_rate=0.2, minimum_channels=8, divisor=8)
-    prune_channel(cfg_file, prune_way='mean_abs', pruned_rate=0.4, minimum_channels=8, divisor=8)
+    # prune_channel(cfg_file, prune_way='mean_abs', pruned_rate=0.4, minimum_channels=8, divisor=8)
     # prune_channel(cfg_file, prune_way='mean_abs', pruned_rate=0.6, minimum_channels=8, divisor=8)
 
     # cfg_file = 'configs/vggnet/vgg16_bn_cifar100_224_e100_sgd_mslr_ssl_filter_and_channel_wise_1e_5.yaml'

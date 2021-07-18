@@ -85,6 +85,7 @@ def computer_conv_threshold(model, percent, prune_type=KEY_FILTER, prune_way='me
     return total, thre
 
 
+# refert to: [Pytorch替换model对象任意层的方法](https://zhuanlan.zhihu.com/p/356273702)
 # The core function refers to the implementation of torch.quantification.fuse_modules()
 def _set_module(model, submodule_key, module):
     tokens = submodule_key.split('.')

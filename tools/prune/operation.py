@@ -29,10 +29,11 @@ def load_model(config_file, data_shape=(1, 3, 224, 224), device=torch.device('cp
     return model, cfg.MODEL.RECOGNIZER.NAME
 
 
-def prune_model(prune_type, prune_way, arch_name, model, ratio=0.2, minimum_channels=8, divisor=8):
+def prune_model(prune_type, prune_way, arch_name, model, ratio=0.2, minimum_channels=8, divisor=8, N=1):
     pruned_ratio, threshold = build_prune(model, model_name=arch_name,
                                           ratio=ratio, prune_type=prune_type, prune_way=prune_way,
-                                          minimum_channels=minimum_channels, divisor=divisor
+                                          minimum_channels=minimum_channels, divisor=divisor,
+                                          N=N
                                           )
     computer_flops_and_params(model)
     compute_model_time((1, 3, 224, 224), model, torch.device('cpu'))
