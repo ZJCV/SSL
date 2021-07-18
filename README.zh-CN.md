@@ -65,7 +65,7 @@ $ python tools/prune/prune_vggnet.py
 $ python tools/train.py -cfg=configs/vggnet/refine_mean_abs_0_2_vgg16_bn_cifar100_224_e100_sgd_mslr_ssl_filter_wise_1e_5.yaml
 ```
 
-最后，在配置文件的PRELOADED选项中设置微调后的模型路径
+最后，在配置文件的`PRELOADED`选项中设置微调后的模型路径
 
 ```angular2html
 $ python tools/test.py -cfg=configs/vggnet/refine_mean_abs_0_2_vgg16_bn_cifar100_224_e100_sgd_mslr_ssl_filter_wise_1e_5.yaml
