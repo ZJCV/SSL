@@ -80,7 +80,7 @@ def prune_conv_bn_relu(old_conv2d_1, old_batchnorm2d, old_relu, old_conv2d_2,
     out_mask = out_mask_1 | out_mask_2
     out_idx = computer_out_idx(out_mask, old_conv2d_1.weight,
                                conv_threshold, prune_way, dim=(1, 2, 3), divisor=divisor)
-    # Number of output channels
+    # Number of output channel
     out_filters = len(out_idx)
 
     # New Conv2d/BatchNorm2d/ReLU
@@ -103,7 +103,7 @@ def prune_conv_bn_relu(old_conv2d_1, old_batchnorm2d, old_relu, old_conv2d_2,
 
 def prune_features(module_list, conv_threshold, prune_way, minimum_channels=8, divisor=8):
     """
-    Given the module composition of features, collect Conv layers one by one, calculate the number of filter pruning and channels, and reconstruct them
+    Given the module composition of features, collect Conv layers one by one, calculate the number of filter pruning and channel, and reconstruct them
     """
     new_module_list = list()
     idx = 0

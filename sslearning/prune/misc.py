@@ -10,7 +10,8 @@
 import torch
 import torch.nn as nn
 
-from sslearning.config.key_word import KEY_FILTER, KEY_CHANNEL, KEY_FILTER_AND_CHANNEL
+from ..config.key_word import KEY_FILTER, KEY_CHANNEL, KEY_FILTER_AND_CHANNEL
+from ..util.misc import group_lasso_by_filter_or_channel
 
 
 def computer_total(model, dim):
@@ -26,7 +27,9 @@ def computer_total(model, dim):
 
 
 def computer_weight(weight, prune_way, dimension):
-    if prune_way == 'mean_abs':
+    if prune_way == 'group_lasso':
+        return group_lasso_by_filter_or_channel(weight.data, dimension)
+    elif prune_way == 'mean_abs':
         return torch.mean(weight.data.abs(), dim=dimension)
     elif prune_way == 'mean':
         return torch.mean(weight.data, dim=dimension)

@@ -34,6 +34,7 @@ def prune_depth(cfg_file, prune_way='mean_abs', N=1):
 
 if __name__ == '__main__':
     cfg_file = 'configs/resnet/resnet50_cifar100_224_e100_sgd_mslr_ssl_depth_wise_1e_5.yaml'
+    prune_depth(cfg_file, prune_way='group_lasso', N=1)
     # prune_depth(cfg_file, prune_way='mean_abs', N=1)
     # prune_depth(cfg_file, prune_way='mean_abs', N=2)
-    prune_depth(cfg_file, prune_way='mean_abs', N=4)
+    # prune_depth(cfg_file, prune_way='mean_abs', N=4)

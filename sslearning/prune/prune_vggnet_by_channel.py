@@ -5,7 +5,7 @@
 @file: prune_vggnet_by_channel.py
 @author: zj
 @description: Pruning the channel dimension of convolution layer
-1. The first Conv2d is not pruned, and its input is a fixed number of channels;
+1. The first Conv2d is not pruned, and its input is a fixed number of channel;
 2. Channel pruning affects the upstream filter dimension, so it needs pruning in reverse order
 """
 
@@ -24,7 +24,7 @@ def prune_conv_bn_relu(old_conv2d, old_batchnorm2d, old_relu, conv_threshold, pr
     assert isinstance(old_relu, nn.ReLU)
 
     weight_copy = computer_weight(old_conv2d.weight, prune_way, (0, 2, 3))
-    # If the number of channels of Conv is less than or equal to the minimum number of channels, pruning is not performed
+    # If the number of channel of Conv is less than or equal to the minimum number of channel, pruning is not performed
     if len(weight_copy) <= minimum_channels:
         in_idx = np.arange(minimum_channels)
     else:
@@ -46,7 +46,7 @@ def prune_conv_bn_relu(old_conv2d, old_batchnorm2d, old_relu, conv_threshold, pr
 
             in_idx = np.array(sorted(np.concatenate((in_idx, res_idx))))
 
-    # the number of channels
+    # the number of channel
     in_channels = len(in_idx)
 
     # New Conv2d/BatchNorm2d/ReLU
@@ -69,7 +69,7 @@ def prune_conv_bn_relu(old_conv2d, old_batchnorm2d, old_relu, conv_threshold, pr
 
 def prune_features(module_list, conv_threshold, prune_way, minimum_channels=8, divisor=8):
     """
-    Given the module composition of features, collect Conv layers one by one, calculate the number of pruning channels, and reconstruct them
+    Given the module composition of features, collect Conv layers one by one, calculate the number of pruning channel, and reconstruct them
     """
     new_module_list = list()
 

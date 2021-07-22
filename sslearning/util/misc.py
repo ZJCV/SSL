@@ -18,6 +18,10 @@ def group_lasso(param_group):
     return torch.sum(param_group ** 2)
 
 
+def group_lasso_by_filter_or_channel(param_group, dimension):
+    return torch.sum(param_group ** 2, dim=dimension)
+
+
 def ssl_loss(model, model_type='resnet', loss_type=KEY_FILTER,
              lambda_n=1e-5, lambda_c=1e-5, lambda_s=1e-5, lambda_d=1e-5):
     assert isinstance(model, torch.nn.Module)
@@ -37,20 +41,24 @@ def ssl_loss(model, model_type='resnet', loss_type=KEY_FILTER,
 
             if loss_type == KEY_FILTER:
                 # Group LASSO over filters of current layer
-                for filter_idx in range(num_filters):
-                    ssl_loss += lambda_n * group_lasso(param[filter_idx, :, :, :])
+                ssl_loss += lambda_n * torch.sum(group_lasso_by_filter_or_channel(param, (1, 2, 3)))
+                # for filter_idx in range(num_filters):
+                #     ssl_loss += lambda_n * group_lasso(param[filter_idx, :, :, :])
             elif loss_type == KEY_CHANNEL:
-                # Group LASSO over channels of current layer
-                for channel_idx in range(num_channels):
-                    ssl_loss += lambda_c * group_lasso(param[:, channel_idx, :, :])
+                # Group LASSO over channel of current layer
+                ssl_loss += lambda_c * torch.sum(group_lasso_by_filter_or_channel(param, (0, 2, 3)))
+                # for channel_idx in range(num_channels):
+                #     ssl_loss += lambda_c * group_lasso(param[:, channel_idx, :, :])
             elif loss_type == KEY_FILTER_AND_CHANNEL:
                 # Group LASSO over filters of current layer
-                for filter_idx in range(num_filters):
-                    ssl_loss += lambda_n * group_lasso(param[filter_idx, :, :, :])
+                ssl_loss += lambda_n * torch.sum(group_lasso_by_filter_or_channel(param, (1, 2, 3)))
+                # for filter_idx in range(num_filters):
+                #     ssl_loss += lambda_n * group_lasso(param[filter_idx, :, :, :])
 
-                # Group LASSO over channels of current layer
-                for channel_idx in range(num_channels):
-                    ssl_loss += lambda_c * group_lasso(param[:, channel_idx, :, :])
+                # Group LASSO over channel of current layer
+                ssl_loss += lambda_c * torch.sum(group_lasso_by_filter_or_channel(param, (0, 2, 3)))
+                # for channel_idx in range(num_channels):
+                #     ssl_loss += lambda_c * group_lasso(param[:, channel_idx, :, :])
             elif loss_type == KEY_FILTER_SHAPE:
                 # Group LASSO over shapes
                 for channel_idx in range(num_channels):

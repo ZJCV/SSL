@@ -23,7 +23,7 @@ def prune_conv_bn_relu(old_conv2d, old_batchnorm2d, old_relu, conv_threshold, pr
     assert isinstance(old_relu, nn.ReLU)
 
     weight_copy = computer_weight(old_conv2d.weight, prune_way, (1, 2, 3))
-    # If the number of channels of BN is less than or equal to minimum_channels, pruning is not performed
+    # If the number of channel of BN is less than or equal to minimum_channels, pruning is not performed
     if len(weight_copy) <= minimum_channels:
         out_idx = np.arange(minimum_channels)
     else:
@@ -45,7 +45,7 @@ def prune_conv_bn_relu(old_conv2d, old_batchnorm2d, old_relu, conv_threshold, pr
 
             out_idx = np.array(sorted(np.concatenate((out_idx, res_idx))))
 
-    # Number of output channels
+    # Number of output channel
     out_filters = len(out_idx)
 
     # New Conv2d/BatchNorm2d/ReLU

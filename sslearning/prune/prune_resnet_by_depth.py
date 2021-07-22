@@ -14,30 +14,39 @@ import torch
 import torch.nn as nn
 from torchvision.models.resnet import Bottleneck
 
-from sslearning.model.prune_bottleneck import PrunedBottleneck
-from sslearning.prune.misc import set_module_list
+from ..model.prune_bottleneck import PrunedBottleneck
+from ..prune.misc import set_module_list
+from ..util.misc import group_lasso
 
 
 def computer_bottleneck_weight(m, prune_way):
     assert isinstance(m, Bottleneck)
 
-    weight_list = list()
-    weight_list.extend(m.conv1.weight.data.reshape(-1))
-    weight_list.extend(m.conv2.weight.data.reshape(-1))
-    weight_list.extend(m.conv3.weight.data.reshape(-1))
+    if prune_way == 'group_lasso':
+        weight = 0
 
-    weight = torch.from_numpy(np.array(weight_list))
-
-    if prune_way == 'mean_abs':
-        return torch.mean(weight.abs())
-    elif prune_way == 'mean':
-        return torch.mean(weight)
-    elif prune_way == 'sum_abs':
-        return torch.sum(weight.abs())
-    elif prune_way == 'sum':
-        return torch.sum(weight)
+        weight += group_lasso(m.conv1.weight.data)
+        weight += group_lasso(m.conv2.weight.data)
+        weight += group_lasso(m.conv3.weight.data)
+        return weight
     else:
-        raise ValueError(f'{prune_way} does not supports')
+        weight_list = list()
+        weight_list.extend(m.conv1.weight.data.reshape(-1))
+        weight_list.extend(m.conv2.weight.data.reshape(-1))
+        weight_list.extend(m.conv3.weight.data.reshape(-1))
+
+        weight = torch.from_numpy(np.array(weight_list))
+
+        if prune_way == 'mean_abs':
+            return torch.mean(weight.abs())
+        elif prune_way == 'mean':
+            return torch.mean(weight)
+        elif prune_way == 'sum_abs':
+            return torch.sum(weight.abs())
+        elif prune_way == 'sum':
+            return torch.sum(weight)
+        else:
+            raise ValueError(f'{prune_way} does not supports')
 
 
 def prune_bottleneck(module_list, prune_way, N=1):
