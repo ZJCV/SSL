@@ -38,7 +38,7 @@ $ pip install -r requirements.txt
 
 ## Usage
 
-First, you need set env for PYTHONPATH and CUDA_VISIBLE_DEVICES
+First, you need set env for `PYTHONPATH` and `CUDA_VISIBLE_DEVICES`
 
 ```angular2html
 $ export PYTHONPATH=<project root path>
