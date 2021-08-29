@@ -15,6 +15,8 @@
   <a href="http://commitizen.github.io/cz-cli/"><img src="https://img.shields.io/badge/commitizen-friendly-brightgreen.svg"></a>
 </p>
 
+* 解析：[ Learning Structured Sparsity in Deep Neural Networks](https://blog.zhujian.life/posts/67852044.html)
+
 ## 内容列表
 
 - [内容列表](#内容列表)
