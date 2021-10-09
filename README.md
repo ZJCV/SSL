@@ -15,7 +15,7 @@
   <a href="http://commitizen.github.io/cz-cli/"><img src="https://img.shields.io/badge/commitizen-friendly-brightgreen.svg"></a>
 </p>
 
-In addition to the different pruning positions mentioned in the paper (filter_wise/channel_wise/filter_and_channel_wise), the warehouse also tried different weight functions (group_lasso/mean_abs/mean/sum_abs/sum).
+In addition to the different pruning positions mentioned in the paper (`filter_wise/channel_wise/filter_and_channel_wise`), the warehouse also tried different weight functions (`group_lasso/mean_abs/mean/sum_abs/sum`).
 
 See
 
