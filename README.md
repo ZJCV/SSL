@@ -15,6 +15,17 @@
   <a href="http://commitizen.github.io/cz-cli/"><img src="https://img.shields.io/badge/commitizen-friendly-brightgreen.svg"></a>
 </p>
 
+In addition to the different pruning positions mentioned in the paper (filter_wise/channel_wise/filter_and_channel_wise), the warehouse also tried different weight functions (group_lasso/mean_abs/mean/sum_abs/sum).
+
+See
+
+* [Which Prune Type?](./docs/which_prune_type.md)
+* [Which Prune Way?](./docs/which_prune_way.md)
+
+More training statistics can see:
+
+* [Details](./docs/details.md)
+
 ## Table of Contents
 
 - [Table of Contents](#table-of-contents)

@@ -17,6 +17,15 @@
 
 * 解析：[ Learning Structured Sparsity in Deep Neural Networks](https://blog.zhujian.life/posts/67852044.html)
 
+除了论文提及的几种剪枝方式（滤波器剪枝/通道剪枝/滤波器-通道剪枝）外，本仓库还测试了不同权重函数（`group_lasso/mean_abs/mean/sum_abs/sum`）对于剪枝的影响。
+
+* [Which Prune Type?](./docs/which_prune_type.md)
+* [Which Prune Way?](./docs/which_prune_way.md)
+
+更详细的训练数据可以查看：
+
+* [Details](./docs/details.md)
+
 ## 内容列表
 
 - [内容列表](#内容列表)
